@@ -129,7 +129,6 @@
     <Compile Include="Controller\Strategy\SimplyChooseByStatisticsStrategy.cs" />
     <Compile Include="Controller\System\AutoStartup.cs" />
     <Compile Include="Controller\FileManager.cs" />
-    <Compile Include="Controller\Service\GFWListUpdater.cs" />
     <Compile Include="Controller\I18N.cs" />
     <Compile Include="Controller\Service\Listener.cs" />
     <Compile Include="Controller\Logging.cs" />
@@ -145,7 +144,6 @@
     <Compile Include="Encryption\SodiumEncryptor.cs" />
     <Compile Include="Encryption\TableEncryptor.cs" />
     <Compile Include="Encryption\IEncryptor.cs" />
-    <Compile Include="Controller\Service\PACServer.cs" />
     <Compile Include="Model\Server.cs" />
     <Compile Include="Model\Configuration.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -167,7 +165,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controller\ShadowsocksController.cs" />
-    <Compile Include="Controller\System\SystemProxy.cs" />
     <Compile Include="View\LogForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -20,14 +20,10 @@ namespace Shadowsocks.Controller
         private Thread _ramThread;
 
         private Listener _listener;
-        private PACServer _pacServer;
         private Configuration _config;
         private StrategyManager _strategyManager;
-        private GFWListUpdater gfwListUpdater;
         private AvailabilityStatistics _availabilityStatics;
         private bool stopped = false;
-
-        private bool _systemProxyIsDirty = false;
 
         public class PathEventArgs : EventArgs
         {
@@ -35,17 +31,7 @@ namespace Shadowsocks.Controller
         }
 
         public event EventHandler ConfigChanged;
-        public event EventHandler EnableStatusChanged;
-        public event EventHandler EnableGlobalChanged;
         public event EventHandler ShareOverLANStatusChanged;
-
-        // when user clicked Edit PAC, and PAC file has already created
-        public event EventHandler<PathEventArgs> PACFileReadyToOpen;
-        public event EventHandler<PathEventArgs> UserRuleFileReadyToOpen;
-
-        public event EventHandler<GFWListUpdater.ResultEventArgs> UpdatePACFromGFWListCompleted;
-
-        public event ErrorEventHandler UpdatePACFromGFWListError;
 
         public event ErrorEventHandler Errored;
 
@@ -141,28 +127,6 @@ namespace Shadowsocks.Controller
             }
         }
 
-        public void ToggleEnable(bool enabled)
-        {
-            _config.enabled = enabled;
-            UpdateSystemProxy();
-            SaveConfig(_config);
-            if (EnableStatusChanged != null)
-            {
-                EnableStatusChanged(this, new EventArgs());
-            }
-        }
-
-        public void ToggleGlobal(bool global)
-        {
-            _config.global = global;
-            UpdateSystemProxy();
-            SaveConfig(_config);
-            if (EnableGlobalChanged != null)
-            {
-                EnableGlobalChanged(this, new EventArgs());
-            }
-        }
-
         public void ToggleShareOverLAN(bool enabled)
         {
             _config.shareOverLan = enabled;
@@ -198,28 +162,6 @@ namespace Shadowsocks.Controller
             {
                 _listener.Stop();
             }
-            if (_config.enabled)
-            {
-                SystemProxy.Update(_config, true);
-            }
-        }
-
-        public void TouchPACFile()
-        {
-            string pacFilename = _pacServer.TouchPACFile();
-            if (PACFileReadyToOpen != null)
-            {
-                PACFileReadyToOpen(this, new PathEventArgs() { Path = pacFilename });
-            }
-        }
-
-        public void TouchUserRuleFile()
-        {
-            string userRuleFilename = _pacServer.TouchUserRuleFile();
-            if (UserRuleFileReadyToOpen != null)
-            {
-                UserRuleFileReadyToOpen(this, new PathEventArgs() { Path = userRuleFilename });
-            }
         }
 
         public string GetQRCodeForCurrentServer()
@@ -235,14 +177,6 @@ namespace Shadowsocks.Controller
             return "ss://" + base64;
         }
 
-        public void UpdatePACFromGFWList()
-        {
-            if (gfwListUpdater != null)
-            {
-                gfwListUpdater.UpdatePACFromGFWList(_config);
-            }
-        }
-
         public void ToggleAvailabilityStatistics(bool enabled)
         {
             if (_availabilityStatics != null)
@@ -253,45 +187,10 @@ namespace Shadowsocks.Controller
             }
         }
 
-        public void SavePACUrl(string pacUrl)
-        {
-            _config.pacUrl = pacUrl;
-            UpdateSystemProxy();
-            SaveConfig(_config);
-            if (ConfigChanged != null)
-            {
-                ConfigChanged(this, new EventArgs());
-            }
-        }
-
-        public void UseOnlinePAC(bool useOnlinePac)
-        {
-            _config.useOnlinePac = useOnlinePac;
-            UpdateSystemProxy();
-            SaveConfig(_config);
-            if (ConfigChanged != null)
-            {
-                ConfigChanged(this, new EventArgs());
-            }
-        }
-
         protected void Reload()
         {
             // some logic in configuration updated the config when saving, we need to read it again
             _config = Configuration.Load();
-
-            if (_pacServer == null)
-            {
-                _pacServer = new PACServer();
-                _pacServer.PACFileChanged += pacServer_PACFileChanged;
-            }
-            _pacServer.UpdateConfiguration(_config);
-            if (gfwListUpdater == null)
-            {
-                gfwListUpdater = new GFWListUpdater();
-                gfwListUpdater.UpdateCompleted += pacServer_PACUpdateCompleted;
-                gfwListUpdater.Error += pacServer_PACUpdateError;
-            }
 
             if (_listener != null)
             {
@@ -317,7 +216,6 @@ namespace Shadowsocks.Controller
                 List<Listener.Service> services = new List<Listener.Service>();
                 services.Add(tcpRelay);
                 services.Add(udpRelay);
-                services.Add(_pacServer);
                 _listener = new Listener(services);
                 _listener.Start(_config);
             }
@@ -342,7 +240,6 @@ namespace Shadowsocks.Controller
                 ConfigChanged(this, new EventArgs());
             }
 
-            UpdateSystemProxy();
             Util.Utils.ReleaseMemory(true);
         }
 
@@ -350,41 +247,6 @@ namespace Shadowsocks.Controller
         {
             Configuration.Save(newConfig);
             Reload();
-        }
-
-        private void UpdateSystemProxy()
-        {
-            if (_config.enabled)
-            {
-                SystemProxy.Update(_config, false);
-                _systemProxyIsDirty = true;
-            }
-            else
-            {
-                // only switch it off if we have switched it on
-                if (_systemProxyIsDirty)
-                {
-                    SystemProxy.Update(_config, false);
-                    _systemProxyIsDirty = false;
-                }
-            }
-        }
-
-        private void pacServer_PACFileChanged(object sender, EventArgs e)
-        {
-            UpdateSystemProxy();
-        }
-
-        private void pacServer_PACUpdateCompleted(object sender, GFWListUpdater.ResultEventArgs e)
-        {
-            if (UpdatePACFromGFWListCompleted != null)
-                UpdatePACFromGFWListCompleted(this, e);
-        }
-
-        private void pacServer_PACUpdateError(object sender, ErrorEventArgs e)
-        {
-            if (UpdatePACFromGFWListError != null)
-                UpdatePACFromGFWListError(this, e);
         }
 
         private void StartReleasingMemory()

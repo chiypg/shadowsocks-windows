@@ -15,13 +15,9 @@ namespace Shadowsocks.Model
         // when strategy is set, index is ignored
         public string strategy;
         public int index;
-        public bool global;
-        public bool enabled;
         public bool shareOverLan;
         public bool isDefault;
         public int localPort;
-        public string pacUrl;
-        public bool useOnlinePac;
         public bool availabilityStatistics;
 
         private static string CONFIG_FILE = "gui-config.json";
