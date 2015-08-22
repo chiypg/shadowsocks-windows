@@ -238,20 +238,6 @@ namespace Shadowsocks.View
             ShowBalloonTip(I18N.GetString("Shadowsocks"), result, ToolTipIcon.Info, 1000);
         }
 
-        //void updateChecker_NewVersionFound(object sender, EventArgs e)
-        //{
-        //    ShowBalloonTip(String.Format(I18N.GetString("Shadowsocks {0} Update Found"), updateChecker.LatestVersionNumber), I18N.GetString("Click here to download"), ToolTipIcon.Info, 5000);
-        //    _notifyIcon.BalloonTipClicked += notifyIcon1_BalloonTipClicked;
-        //    _isFirstRun = false;
-        //}
-
-        //void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
-        //{
-        //    System.Diagnostics.Process.Start(updateChecker.LatestVersionURL);
-        //    _notifyIcon.BalloonTipClicked -= notifyIcon1_BalloonTipClicked;
-        //}
-
-
         private void LoadCurrentConfiguration()
         {
             Configuration config = controller.GetConfigurationCopy();
