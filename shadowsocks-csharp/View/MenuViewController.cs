@@ -20,7 +20,7 @@ namespace Shadowsocks.View
         // and it should just do anything related to the config form
 
         private ShadowsocksController controller;
-        private UpdateChecker updateChecker;
+        //private UpdateChecker updateChecker;
 
         private NotifyIcon _notifyIcon;
         private ContextMenu contextMenu1;
@@ -67,12 +67,12 @@ namespace Shadowsocks.View
             _notifyIcon.ContextMenu = contextMenu1;
             _notifyIcon.MouseDoubleClick += notifyIcon1_DoubleClick;
 
-            this.updateChecker = new UpdateChecker();
-            updateChecker.NewVersionFound += updateChecker_NewVersionFound;
+            //this.updateChecker = new UpdateChecker();
+            //updateChecker.NewVersionFound += updateChecker_NewVersionFound;
 
             LoadCurrentConfiguration();
 
-            updateChecker.CheckUpdate(controller.GetConfigurationCopy());
+            //updateChecker.CheckUpdate(controller.GetConfigurationCopy());
 
             if (controller.GetConfigurationCopy().isDefault)
             {
@@ -135,7 +135,7 @@ namespace Shadowsocks.View
                 serverInfo = config.GetCurrentServer().FriendlyName();
             }
             // we want to show more details but notify icon title is limited to 63 characters
-            string text = I18N.GetString("Shadowsocks") + " " + UpdateChecker.Version + "\n" +
+            string text = I18N.GetString("Shadowsocks") + " " + AppVersion.Version + "\n" +
                 (enabled ?
                     I18N.GetString("System Proxy On: ") + (global ? I18N.GetString("Global") : I18N.GetString("PAC")) :
                     String.Format(I18N.GetString("Running: Port {0}"), config.localPort))  // this feedback is very important because they need to know Shadowsocks is running
@@ -238,18 +238,18 @@ namespace Shadowsocks.View
             ShowBalloonTip(I18N.GetString("Shadowsocks"), result, ToolTipIcon.Info, 1000);
         }
 
-        void updateChecker_NewVersionFound(object sender, EventArgs e)
-        {
-            ShowBalloonTip(String.Format(I18N.GetString("Shadowsocks {0} Update Found"), updateChecker.LatestVersionNumber), I18N.GetString("Click here to download"), ToolTipIcon.Info, 5000);
-            _notifyIcon.BalloonTipClicked += notifyIcon1_BalloonTipClicked;
-            _isFirstRun = false;
-        }
+        //void updateChecker_NewVersionFound(object sender, EventArgs e)
+        //{
+        //    ShowBalloonTip(String.Format(I18N.GetString("Shadowsocks {0} Update Found"), updateChecker.LatestVersionNumber), I18N.GetString("Click here to download"), ToolTipIcon.Info, 5000);
+        //    _notifyIcon.BalloonTipClicked += notifyIcon1_BalloonTipClicked;
+        //    _isFirstRun = false;
+        //}
 
-        void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(updateChecker.LatestVersionURL);
-            _notifyIcon.BalloonTipClicked -= notifyIcon1_BalloonTipClicked;
-        }
+        //void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        //{
+        //    System.Diagnostics.Process.Start(updateChecker.LatestVersionURL);
+        //    _notifyIcon.BalloonTipClicked -= notifyIcon1_BalloonTipClicked;
+        //}
 
 
         private void LoadCurrentConfiguration()

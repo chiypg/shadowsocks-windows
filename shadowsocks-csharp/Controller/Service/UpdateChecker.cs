@@ -10,6 +10,12 @@ using SimpleJson;
 
 namespace Shadowsocks.Controller
 {
+    public class AppVersion
+    {
+        public const string Version = "2.5.7";
+    }
+
+    [Obsolete("Not used anymore", true)]
     public class UpdateChecker
     {
         private const string UpdateURL = "https://api.github.com/repos/shadowsocks/shadowsocks-windows/releases";
