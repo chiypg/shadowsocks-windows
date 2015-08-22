@@ -20,7 +20,6 @@ namespace Shadowsocks.View
         // and it should just do anything related to the config form
 
         private ShadowsocksController controller;
-        //private UpdateChecker updateChecker;
 
         private NotifyIcon _notifyIcon;
         private ContextMenu contextMenu1;
