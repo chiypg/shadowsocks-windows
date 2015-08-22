@@ -92,9 +92,7 @@ namespace Shadowsocks.Properties {
         ///Edit User Rule for GFWList...=编辑 GFWList 的用户规则...
         ///Show QRCode...=显示二维码...
         ///Scan QRCode from Screen...=扫描屏幕上的二维码...
-        ///Show Logs...=显示日志...
-        ///About...=关于...
-        ///Quit=退出 [rest of string was truncated]&quot;;.
+        ///Availability Statistic [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string cn {
             get {
@@ -118,29 +116,6 @@ namespace Shadowsocks.Properties {
         internal static byte[] mgwz_dll {
             get {
                 object obj = ResourceManager.GetObject("mgwz_dll", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to listen-address __POLIPO_BIND_IP__:8123
-        ///show-on-task-bar 0
-        ///activity-animation 0
-        ///forward-socks5 / 127.0.0.1:__SOCKS_PORT__ .
-        ///hide-console.
-        /// </summary>
-        internal static string privoxy_conf {
-            get {
-                return ResourceManager.GetString("privoxy_conf", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] privoxy_exe {
-            get {
-                object obj = ResourceManager.GetObject("privoxy_exe", resourceCulture);
                 return ((byte[])(obj));
             }
         }

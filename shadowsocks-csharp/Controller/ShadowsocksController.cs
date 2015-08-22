@@ -23,7 +23,6 @@ namespace Shadowsocks.Controller
         private PACServer _pacServer;
         private Configuration _config;
         private StrategyManager _strategyManager;
-        private PolipoRunner polipoRunner;
         private GFWListUpdater gfwListUpdater;
         private AvailabilityStatistics _availabilityStatics;
         private bool stopped = false;
@@ -199,10 +198,6 @@ namespace Shadowsocks.Controller
             {
                 _listener.Stop();
             }
-            if (polipoRunner != null)
-            {
-                polipoRunner.Stop();
-            }
             if (_config.enabled)
             {
                 SystemProxy.Update(_config, true);
@@ -285,10 +280,6 @@ namespace Shadowsocks.Controller
             // some logic in configuration updated the config when saving, we need to read it again
             _config = Configuration.Load();
 
-            if (polipoRunner == null)
-            {
-                polipoRunner = new PolipoRunner();
-            }
             if (_pacServer == null)
             {
                 _pacServer = new PACServer();
@@ -313,11 +304,6 @@ namespace Shadowsocks.Controller
                 _availabilityStatics.UpdateConfiguration(_config);
             }
 
-            // don't put polipoRunner.Start() before pacServer.Stop()
-            // or bind will fail when switching bind address from 0.0.0.0 to 127.0.0.1
-            // though UseShellExecute is set to true now
-            // http://stackoverflow.com/questions/10235093/socket-doesnt-close-after-application-exits-if-a-launched-process-is-open
-            polipoRunner.Stop();
             try
             {
                 var strategy = GetCurrentStrategy();
@@ -326,15 +312,12 @@ namespace Shadowsocks.Controller
                     strategy.ReloadServers();
                 }
 
-                polipoRunner.Start(_config);
-
                 TCPRelay tcpRelay = new TCPRelay(this);
                 UDPRelay udpRelay = new UDPRelay(this);
                 List<Listener.Service> services = new List<Listener.Service>();
                 services.Add(tcpRelay);
                 services.Add(udpRelay);
                 services.Add(_pacServer);
-                services.Add(new PortForwarder(polipoRunner.RunningPort));
                 _listener = new Listener(services);
                 _listener.Start(_config);
             }
